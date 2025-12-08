@@ -6,13 +6,54 @@ input_path = "day2_input.txt"
 if len(sys.argv) > 1:
     input_path = sys.argv[1]
 
-def is_valid_id(id: int)->bool:
+def is_valid_id_part1(id: int)->bool:
     idstr = str(id)
     n = len(idstr)
     if n % 2 != 0:
         return True
     midp = n // 2
     return idstr[:midp] != idstr[midp:]
+
+def is_valid_id(id: int) -> bool:
+    idstr = str(id)
+    n = len(idstr)
+
+    if id in [11, 22]:
+        import pdb;pdb.set_trace()
+
+    if n % 2 != 0 and n %3 != 0:
+        return True
+
+    def are_subranges_same(total_len: int, divisor: int) -> bool:
+        if divisor in [0, 1]:
+            return False
+        offset = total_len // divisor
+        sp = 0
+        ep = offset
+        tmp = set()
+        while ep <= n:
+            tmp.add(idstr[sp:ep])
+            sp, ep = sp+offset, ep+offset
+        return len(tmp) == 1
+
+    if n % 2 == 0:
+        div = 2
+        while div <= n:
+            if are_subranges_same(n, div):
+                return False
+            if are_subranges_same(n, n//div):
+                return False
+            div += 2
+        return True
+    # else n % 3 == 0
+    div = 3
+    while div <= n:
+        if are_subranges_same(n, div):
+            return False
+        if are_subranges_same(n, n//div):
+            return False
+        div += 3
+    return True
 
 def get_invalid_ids(start_id: str, end_id: str) -> [int]:
     invalid_ids = []
@@ -39,7 +80,7 @@ for id_range in all_id_ranges.strip().split(','):
     start_id, end_id = id_range.split('-')
     all_invalid_ids.extend(get_invalid_ids(start_id, end_id))
 
-#import pdb;pdb.set_trace()
-#print("..")
+import pdb;pdb.set_trace()
+print("..")
 
 print(f"final {len(all_invalid_ids)} invalid ids, sum={sum(all_invalid_ids)}")
