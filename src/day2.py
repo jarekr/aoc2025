@@ -18,8 +18,8 @@ def is_valid_id(id: int) -> bool:
     idstr = str(id)
     n = len(idstr)
 
-    if id in [11, 22]:
-        import pdb;pdb.set_trace()
+    if n > 1 and len(set(idstr)) == 1:
+        return False # all digits repeat
 
     if n % 2 != 0 and n %3 != 0:
         return True
@@ -44,15 +44,14 @@ def is_valid_id(id: int) -> bool:
             if are_subranges_same(n, n//div):
                 return False
             div += 2
-        return True
-    # else n % 3 == 0
-    div = 3
-    while div <= n:
-        if are_subranges_same(n, div):
-            return False
-        if are_subranges_same(n, n//div):
-            return False
-        div += 3
+    if n % 3 == 0:
+        div = 3
+        while div <= n:
+            if are_subranges_same(n, div):
+                return False
+            if are_subranges_same(n, n//div):
+                return False
+            div += 3
     return True
 
 def get_invalid_ids(start_id: str, end_id: str) -> [int]:
@@ -80,7 +79,7 @@ for id_range in all_id_ranges.strip().split(','):
     start_id, end_id = id_range.split('-')
     all_invalid_ids.extend(get_invalid_ids(start_id, end_id))
 
-import pdb;pdb.set_trace()
-print("..")
+#import pdb;pdb.set_trace()
+#print("..")
 
 print(f"final {len(all_invalid_ids)} invalid ids, sum={sum(all_invalid_ids)}")
