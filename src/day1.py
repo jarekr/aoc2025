@@ -18,14 +18,17 @@ def turn_to(pos: int, rot: str) -> int:
             zeroes_past_count = -1 * (new_pos // 100)
             if pos == 0:
                 zeroes_past_count -= 1
-        elif new_pos == 0 and pos != 0:
+        new_pos = new_pos % 100
+        if new_pos == 0:
             zeroes_past_count += 1
+
     else:
         new_pos = pos + rdist
         zeroes_past_count = new_pos // 100
+        new_pos = new_pos % 100
+
     #import pdb;pdb.set_trace()
-    new_pos = new_pos % 100
-    print(f"{rot=} {pos=} -> {new_pos=}")
+    print(f"{rot=} {pos=} -> {new_pos=} {zeroes_past_count=}")
     return (new_pos, zeroes_past_count)
 
 
@@ -43,6 +46,4 @@ with open(input_path, "r") as fh:
         zero_count += zeroes_past_count
 
 print(f"final pos={pos} after {count} turns, {zero_count=}")
-
-
 
