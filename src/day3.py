@@ -5,6 +5,27 @@ from pathlib import Path
 INPUT_PATH = "inputs/day3_input.txt"
 
 def find_max_joltage(bank: str):
+    top_batsi = [-1] * 12
+    n = len(bank)
+    lefti = 0
+    righti = n - 12
+    ti = 0
+
+    for ti in range(12):
+        max_bat = -1
+        maxi = -1
+        for i in range(lefti,righti+1):
+            bat = int(bank[i])
+            if bat > max_bat:
+                max_bat = bat
+                maxi = i
+        top_batsi[ti] = maxi
+        lefti = maxi + 1
+        righti = n - (12 - (ti+1))
+
+    return int("".join([bank[top_batsi[i]] for i in range(12)]))
+
+def find_max_joltage2(bank: str):
     max_bat , left_max, right_max = -1, -1, -1
     max_bati, left_maxi, right_maxi = -1, -1, -1
 
@@ -38,7 +59,6 @@ def main():
         input_path = Path(sys.argv[1])
 
     powerbanks: list[str] = []
-    import pdb;pdb.set_trace()
     with open(input_path, "r") as fh:
         for line in fh:
             powerbanks.append(line.strip())
