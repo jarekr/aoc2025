@@ -20,13 +20,14 @@ def merge_ranges(fresh_ranges):
 
     fresh_ranges.sort()
     new_ranges = [list(fresh_ranges[0])]
+    #import pdb;pdb.set_trace()
 
     for i in range(1, len(fresh_ranges)):
         start, end = fresh_ranges[i]
         if start > new_ranges[-1][1]:
             new_ranges.append([start, end])
         else:
-            new_ranges[-1][1] = end
+            new_ranges[-1][1] = max(end, new_ranges[-1][1])
     return new_ranges
 
 def part2(fresh_ranges, _):
@@ -37,7 +38,7 @@ def part2(fresh_ranges, _):
     print(f"merged {n} into {len(fresh_ranges)}")
 
     for start, end in fresh_ranges:
-        fresh_count += end - start
+        fresh_count += (end - start) + 1
     print(f"found {fresh_count} total fresh IDs")
 
 def main():
