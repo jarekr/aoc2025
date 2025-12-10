@@ -14,6 +14,32 @@ def part1(fresh_ranges, avaialble_ids):
                 break
     print(f"found {fresh_count} fresh IDs out of {len(avaialble_ids)}")
 
+def merge_ranges(fresh_ranges):
+    if not fresh_ranges:
+        return
+
+    fresh_ranges.sort()
+    new_ranges = [list(fresh_ranges[0])]
+
+    for i in range(1, len(fresh_ranges)):
+        start, end = fresh_ranges[i]
+        if start > new_ranges[-1][1]:
+            new_ranges.append([start, end])
+        else:
+            new_ranges[-1][1] = end
+    return new_ranges
+
+def part2(fresh_ranges, _):
+    fresh_count = 0
+
+    n = len(fresh_ranges)
+    fresh_ranges = merge_ranges(fresh_ranges)
+    print(f"merged {n} into {len(fresh_ranges)}")
+
+    for start, end in fresh_ranges:
+        fresh_count += end - start
+    print(f"found {fresh_count} total fresh IDs")
+
 def main():
     input_path = Path(INPUT_PATH)
     if len(sys.argv) > 1:
@@ -39,7 +65,7 @@ def main():
         print(f"failed to find ranges and/or ids from {input_path}")
         sys.exit(3)
 
-    part1(fresh_ranges, available_ids)
+    part2(fresh_ranges, available_ids)
 
 main()
 if __name__ == "__MAIN__":
