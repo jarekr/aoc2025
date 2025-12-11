@@ -62,45 +62,34 @@ def part2(diagram: list[str]):
 
     for i in range(cols):
         if diagram[0][i] == 'S':
-            timelines_by_col[i] = [1]
+            timelines_by_col[i] = 1
             break
 
-    nodecount = 1
     for row in range(1, rows):
         new_timelines_by_col = {}
 
         for col in range(cols):
-            timelines = timelines_by_col.get(col, [])
-            if not timelines:
-                continue
             if diagram[row][col] == '.':
                 continue
             if diagram[row][col] == '^':
-                for tl in timelines:
-                    prev_id = tl
+                tlcount = timelines_by_col.get(col, 0)
+                if not tlcount:
+                    continue
+                for _ in range(tlcount):
                     for new_col in (col - 1, col + 1):
-                        if new_col >= 0 and new_col < cols and diagram[row][new_col] == '.':
-                            nodecount += 1
-                            if tl:
-                                new_timelines_by_col.setdefault(new_col, []).append(tl)
-                                tl = None
-                            else:
-                                new_timelines_by_col.setdefault(new_col, []).append(prev_id+1)
+                        if new_col >= 0 and new_col < cols and diagram[row][new_col] != '^':
+                            new_timelines_by_col[new_col] = new_timelines_by_col.get(new_col, 0) + 1
 
                 del timelines_by_col[col]
 
-        for c in new_timelines_by_col:
-            timelines_by_col.setdefault(c, []).extend(new_timelines_by_col[c])
+        import pdb;pdb.set_trace()
+        timelines_by_col.update(new_timelines_by_col)
 
-        tlcount = 0
-        for col in timelines_by_col:
-            tlcount += len(timelines_by_col.get(col, []))
+        tlcount = sum(timelines_by_col.values())
         print(f"{row=} {len(timelines_by_col)=} {tlcount=}")
         #print(diagram[row])
 
-    tlcount = 0
-    for col in timelines_by_col:
-        tlcount += len(timelines_by_col.get(col, []))
+    tlcount = sum(timelines_by_col.values())
     print(f"result: {len(timelines_by_col)} total beams, {tlcount=}")
 
 def main():
