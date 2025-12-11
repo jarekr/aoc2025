@@ -75,14 +75,15 @@ def part2(diagram: list[str]):
                 tlcount = timelines_by_col.get(col, 0)
                 if not tlcount:
                     continue
-                for _ in range(tlcount):
-                    for new_col in (col - 1, col + 1):
-                        if new_col >= 0 and new_col < cols and diagram[row][new_col] != '^':
-                            new_timelines_by_col[new_col] = new_timelines_by_col.get(new_col, 0) + 1
 
+                for new_col in (col - 1, col + 1):
+                    if new_col >= 0 and new_col < cols and diagram[row][new_col] != '^':
+                        new_timelines_by_col[new_col] = new_timelines_by_col.get(new_col, 0) + tlcount
+
+                #import pdb;pdb.set_trace()
                 del timelines_by_col[col]
 
-        import pdb;pdb.set_trace()
+        #import pdb;pdb.set_trace()
         timelines_by_col.update(new_timelines_by_col)
 
         tlcount = sum(timelines_by_col.values())
