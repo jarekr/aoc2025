@@ -52,46 +52,45 @@ class Timeline:
     row: int
     col: int
 
+
 def part2(diagram: list[str]):
     if not diagram:
         return
     rows = len(diagram)
     cols = len(diagram[0])
 
-    timelines_by_col = {}
+    tls = [0] * cols
 
     for i in range(cols):
         if diagram[0][i] == 'S':
-            timelines_by_col[i] = 1
+            tls[i] = 1
             break
 
     for row in range(1, rows):
-        new_timelines_by_col = {}
+        new_tls = [0] * cols
 
         for col in range(cols):
             if diagram[row][col] == '.':
                 continue
             if diagram[row][col] == '^':
-                tlcount = timelines_by_col.get(col, 0)
+                tlcount = tls[col]
                 if not tlcount:
                     continue
 
                 for new_col in (col - 1, col + 1):
                     if new_col >= 0 and new_col < cols and diagram[row][new_col] != '^':
-                        new_timelines_by_col[new_col] = new_timelines_by_col.get(new_col, 0) + tlcount
+                        new_tls[new_col] += tlcount
 
-                #import pdb;pdb.set_trace()
-                del timelines_by_col[col]
+                tls[col] = 0
 
-        #import pdb;pdb.set_trace()
-        timelines_by_col.update(new_timelines_by_col)
+        for i in range(cols):
+            tls[i] += new_tls[i]
 
-        tlcount = sum(timelines_by_col.values())
-        print(f"{row=} {len(timelines_by_col)=} {tlcount=}")
-        #print(diagram[row])
+        tlcount, beams = sum(tls), sum((1 for tls in tls if tls))
+        print(f"{row=} {beams=} {tlcount=}")
 
-    tlcount = sum(timelines_by_col.values())
-    print(f"result: {len(timelines_by_col)} total beams, {tlcount=}")
+    tlcount, beams = sum(tls), sum((1 for tls in tls if tls))
+    print(f"result: {beams} total beams, {tlcount=}")
 
 def main():
     input_path = Path(INPUT_PATH)
@@ -101,13 +100,11 @@ def main():
         else:
             input_path = Path(sys.argv[1])
 
-    tmp = []
+    diagram = []
 
     with open(input_path, "r") as fh:
         for line in fh:
-            tmp.append(line.strip('\n\r'))
-
-    diagram = tmp
+            diagram.append(line.strip('\n\r'))
 
     if not diagram:
         print(f"failed to find read diagram from {input_path}")
