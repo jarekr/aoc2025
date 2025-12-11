@@ -16,6 +16,15 @@ TESTINPUT_PATH = "inputs/day7_testinput.txt"
 # 6: 3, 7 -> 9 # 2
 # 7: 6, 9 -> 9 # 0
 
+# 0: 0, 0 -> 1 # 1
+# 1: 1, 1 -> 2 # 2
+# 2: 2, 2 -> 3 # 4
+# 3: 3, 3 -> 4 # 7
+# 4: 3, 4 -> 6 # 8
+# 5: 4, 6 -> 7 # 1
+# 6: 3, 7 -> 9 # 2
+# 7: 6, 9 -> 9 # 0
+
 def part1(diagram: list[str]):
     if not diagram:
         return
@@ -37,6 +46,63 @@ def part1(diagram: list[str]):
                         beam_locs[new_col] = 1
     print(f"result: {sum(beam_locs)} total beams, {splitcount=}")
 
+@dataclass
+class Timeline:
+    id: int
+    row: int
+    col: int
+
+def part2(diagram: list[str]):
+    if not diagram:
+        return
+    rows = len(diagram)
+    cols = len(diagram[0])
+
+    timelines_by_col = {}
+
+    for i in range(cols):
+        if diagram[0][i] == 'S':
+            timelines_by_col[i] = [1]
+            break
+
+    nodecount = 1
+    for row in range(1, rows):
+        new_timelines_by_col = {}
+
+        for col in range(cols):
+            timelines = timelines_by_col.get(col, [])
+            if not timelines:
+                continue
+            if diagram[row][col] == '.':
+                continue
+            if diagram[row][col] == '^':
+                for tl in timelines:
+                    prev_id = tl
+                    for new_col in (col - 1, col + 1):
+                        if new_col >= 0 and new_col < cols and diagram[row][new_col] == '.':
+                            nodecount += 1
+                            if tl:
+                                new_timelines_by_col.setdefault(new_col, []).append(tl)
+                                tl = None
+                            else:
+                                new_timelines_by_col.setdefault(new_col, []).append(prev_id+1)
+
+                del timelines_by_col[col]
+
+        for c in new_timelines_by_col:
+            timelines_by_col.setdefault(c, []).extend(new_timelines_by_col[c])
+
+        tlcount = 0
+        for col in timelines_by_col:
+            tlcount += len(timelines_by_col.get(col, []))
+        print(f"{row=} {len(timelines_by_col)=} {tlcount=}")
+        #print(diagram[row])
+
+    tlcount = 0
+    for col in timelines_by_col:
+        tlcount += len(timelines_by_col.get(col, []))
+    print(f"result: {len(timelines_by_col)} total beams, {tlcount=}")
+
 def main():
     input_path = Path(INPUT_PATH)
     if len(sys.argv) > 1:
@@ -57,7 +123,8 @@ def main():
         print(f"failed to find read diagram from {input_path}")
         sys.exit(3)
 
-    part1(diagram)
+    #part1(diagram)
+    part2(diagram)
 
 
 main()
