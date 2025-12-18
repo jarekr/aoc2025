@@ -5,8 +5,9 @@ from pathlib import Path
 from dataclasses import dataclass
 from heapq import heappush, heappop
 
-INPUT_PATH = "inputs/day8_input.txt"
-TESTINPUT_PATH = "inputs/day8_testinput.txt"
+DAY=8
+INPUT_PATH = f"inputs/day{DAY}_input.txt"
+TESTINPUT_PATH = f"inputs/day{DAY}_testinput.txt"
 
 def dist(p1, p2):
     return ((p1[0]-p2[0])**2 +
