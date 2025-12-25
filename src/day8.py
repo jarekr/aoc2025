@@ -1,6 +1,7 @@
 
 import sys
 import math
+from typing import List, Tuple
 from pathlib import Path
 from dataclasses import dataclass
 from heapq import heappush, heappop
@@ -26,7 +27,7 @@ def find_smallest_dist(adjacency: dict) -> tuple:
     return shortest
 
 
-def part1(boxes: list[tuple[int]]):
+def part1(boxes: List[Tuple[int]]):
     #print(f"result: {sum(beam_locs)} total beams, {splitcount=}")
     # 1. build adjacency list of edges for each point
     starting_box = boxes[0]
@@ -38,7 +39,19 @@ def part1(boxes: list[tuple[int]]):
             adjacency.setdefault(box, set()).add(subbox)
             adjacency.setdefault(subbox, set()).add(box)
 
-    print(f"from start {starting_box}: {adjacency[starting_box]}")
+    for box in adjacency:
+        sorted_adj = sorted(adjacency[box], key = lambda bx: dist(bx, box))
+        adjacency[box] = sorted_adj
+
+    edges = {}
+
+    # find shortest path to starting box
+    ab, bb = starting_box, adjacency[starting_box][0]
+    edges.setdefault(ab, []).append(bb)
+    edges.setdefault(bb, []).append(ab)
+    print(f"from start {ab} to {bb}")
+    adjacency[starting_box] = adjacency[starting_box][1:]
+
 
     shortest = find_smallest_dist(adjacency)
     print(f"shortest dist=={shortest}")
@@ -53,7 +66,7 @@ def main():
         else:
             input_path = Path(sys.argv[1])
 
-    boxes = []
+    boxes: List[Tuple[int]] = []
 
     with open(input_path, "r") as fh:
         for line in fh:
@@ -63,6 +76,7 @@ def main():
         print(f"failed to find read boxes from {input_path}")
         sys.exit(3)
 
+    #import pdb;pdb.set_trace()
     part1(boxes)
 
 
